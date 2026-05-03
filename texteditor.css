@@ -1,0 +1,19 @@
+body {
+  margin: 1em auto;
+  max-width: 768px;
+  background-color: dimgrey;
+  color: lightgray;
+}
+
+* {
+  font-family: "Comic Sans MS";
+}
+
+#files-list li {
+  cursor: pointer;
+}
+
+h2 {
+  font-size: 100%;
+  font-style: italic;
+}

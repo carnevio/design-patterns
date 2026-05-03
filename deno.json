@@ -1,0 +1,9 @@
+{
+  "tasks": {
+    "texteditor": "deno bundle --watch texteditor.ts -o texteditor.js"
+  },
+  "imports": {
+    "@std/assert": "jsr:@std/assert@1"
+  },
+  "compilerOptions": { "lib": ["dom", "deno.ns"] }
+}
