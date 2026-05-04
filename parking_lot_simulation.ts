@@ -1,20 +1,26 @@
-import { ParkingLot } from "./parking_lot.ts";
+import { ParkingLot, Subscriber, ParkingLotEvent } from "./parking_lot.ts";
 
 const maxFillIntervalMillis = 1000;
 const maxEmptyIntervalMillis = 2000;
 const initialFillPhaseMillis = 5000;
-const refreshDisplayIntervalMillis = 250;
 
 const sleep = (millis: number) => new Promise((r) => setTimeout(r, millis));
 
 const rand = (min: number, max: number) =>
   Math.floor(Math.random() * (max - min + 1));
 
+// Display as Subscriber
+class Display implements Subscriber {
+  update(event: ParkingLotEvent): void {
+    const action = event.type === "entered" ? "A car entered" : "A car left";
+    console.log(`${action} the lot ${event.name}: ${event.occupied}/${event.capacity} occupied.`);
+  }
+}
+
 const fill = async (lot: ParkingLot) => {
   while (!lot.isFull()) {
     await sleep(rand(0, maxFillIntervalMillis));
     lot.enter();
-    console.log(`a car entered the lot ${lot.name}`);
   }
 };
 
@@ -22,22 +28,15 @@ const empty = async (lot: ParkingLot) => {
   while (!lot.isEmpty()) {
     await sleep(rand(0, maxEmptyIntervalMillis));
     lot.exit();
-    console.log(`a car left the lot ${lot.name}`);
-  }
-};
-
-const display = async (lot: ParkingLot) => {
-  while (true) {
-    console.log(`${lot.name}: ${lot.occupied}/${lot.capacity} occupied`);
-    await sleep(refreshDisplayIntervalMillis);
   }
 };
 
 const bahnhofParking = new ParkingLot("Bahnhof Parking", 100);
-const screen = display(bahnhofParking);
+const display = new Display();
+bahnhofParking.subscribe(display);
+
 const filler = fill(bahnhofParking);
 await sleep(initialFillPhaseMillis);
 const emptier = empty(bahnhofParking);
-await screen;
 await filler;
 await emptier;
